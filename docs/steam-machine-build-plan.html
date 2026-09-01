@@ -1,0 +1,798 @@
+<title>Couch and Deck</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+
+<style>
+:root{
+  --ground:#f4f6f7;
+  --surface:#ffffff;
+  --surface-2:#eceff1;
+  --ink:#14191d;
+  --ink-2:#3d4a54;
+  --muted:#63727e;
+  --rule:#d5dbdf;
+  --rule-strong:#b9c3c9;
+
+  --stream:#0f7c88;
+  --stream-soft:#e0f0f2;
+  --couch:#9a5c14;
+  --couch-soft:#f6ebdc;
+  --danger:#a92a1f;
+  --danger-soft:#f8e6e4;
+
+  --code-bg:#161c21;
+  --code-ink:#dbe3e8;
+  --code-dim:#7d8d99;
+
+  --shadow:0 1px 2px rgba(20,25,29,.06), 0 8px 24px -16px rgba(20,25,29,.35);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --ground:#0f1418;
+    --surface:#161d22;
+    --surface-2:#1d262c;
+    --ink:#e7edf1;
+    --ink-2:#b8c5cd;
+    --muted:#8b9aa5;
+    --rule:#2a353d;
+    --rule-strong:#3a4750;
+
+    --stream:#4fc0cc;
+    --stream-soft:#123034;
+    --couch:#e0a458;
+    --couch-soft:#332312;
+    --danger:#f28a80;
+    --danger-soft:#381916;
+
+    --code-bg:#0a0e11;
+    --code-ink:#d3dce2;
+    --code-dim:#6d7d88;
+
+    --shadow:0 1px 2px rgba(0,0,0,.5), 0 8px 24px -16px rgba(0,0,0,.9);
+  }
+}
+:root[data-theme="dark"]{
+  --ground:#0f1418;
+  --surface:#161d22;
+  --surface-2:#1d262c;
+  --ink:#e7edf1;
+  --ink-2:#b8c5cd;
+  --muted:#8b9aa5;
+  --rule:#2a353d;
+  --rule-strong:#3a4750;
+
+  --stream:#4fc0cc;
+  --stream-soft:#123034;
+  --couch:#e0a458;
+  --couch-soft:#332312;
+  --danger:#f28a80;
+  --danger-soft:#381916;
+
+  --code-bg:#0a0e11;
+  --code-ink:#d3dce2;
+  --code-dim:#6d7d88;
+
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 8px 24px -16px rgba(0,0,0,.9);
+}
+
+*{box-sizing:border-box}
+body{
+  background:var(--ground);
+  color:var(--ink);
+  font-family:"IBM Plex Sans",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  font-size:16px;
+  line-height:1.62;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{font-family:Archivo,"IBM Plex Sans",sans-serif;text-wrap:balance;margin:0}
+code,kbd,pre,.mono{font-family:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace}
+
+.wrap{max-width:1180px;margin:0 auto;padding:0 24px}
+
+/* ---------- masthead ---------- */
+.mast{border-bottom:1px solid var(--rule);background:var(--surface)}
+.mast-inner{padding:52px 0 34px;display:flex;flex-direction:column;gap:20px}
+.eyebrow{
+  font-family:"IBM Plex Mono",monospace;font-size:.7rem;font-weight:500;
+  letter-spacing:.15em;text-transform:uppercase;color:var(--muted);
+}
+h1{font-size:clamp(2.2rem,5.4vw,3.4rem);font-weight:700;letter-spacing:-.03em;line-height:1.04}
+.standfirst{
+  font-size:clamp(1.02rem,2vw,1.18rem);color:var(--ink-2);max-width:62ch;
+}
+.standfirst strong{color:var(--ink);font-weight:600}
+
+.spec{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(148px,1fr));
+  gap:1px;background:var(--rule);border:1px solid var(--rule);
+  border-radius:3px;overflow:hidden;margin-top:6px;
+}
+.spec div{background:var(--surface);padding:11px 14px}
+.spec dt{
+  font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);margin-bottom:3px;
+}
+.spec dd{margin:0;font-size:.88rem;font-weight:500;font-variant-numeric:tabular-nums}
+
+/* ---------- layout ---------- */
+.cols{display:block;padding:44px 0 90px}
+@media (min-width:1040px){
+  .cols{display:grid;grid-template-columns:214px minmax(0,1fr);gap:56px;align-items:start}
+}
+.rail{display:none}
+@media (min-width:1040px){
+  .rail{display:block;position:sticky;top:28px}
+}
+.rail h4{
+  font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;margin-bottom:12px;
+}
+.rail ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:1px}
+.rail a{
+  display:flex;gap:9px;padding:5px 0;color:var(--ink-2);text-decoration:none;
+  font-size:.83rem;line-height:1.35;border-left:2px solid transparent;padding-left:11px;
+}
+.rail a:hover{color:var(--ink);border-left-color:var(--rule-strong)}
+.rail a .n{
+  font-family:"IBM Plex Mono",monospace;font-size:.72rem;color:var(--muted);
+  font-variant-numeric:tabular-nums;flex:none;padding-top:1px;
+}
+
+main{min-width:0;max-width:70ch}
+section{margin-bottom:52px;scroll-margin-top:20px}
+section > * + *{margin-top:16px}
+
+.phase-head{display:flex;flex-direction:column;gap:9px;margin-bottom:20px}
+.phase-num{
+  font-family:"IBM Plex Mono",monospace;font-size:.68rem;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--muted);display:flex;align-items:center;gap:10px;
+}
+.phase-num::after{content:"";flex:1;height:1px;background:var(--rule)}
+h2{font-size:clamp(1.42rem,3vw,1.85rem);font-weight:700;letter-spacing:-.02em;line-height:1.15}
+h3{
+  font-size:.97rem;font-weight:600;letter-spacing:-.005em;margin-top:30px;
+  padding-bottom:6px;border-bottom:1px solid var(--rule);
+}
+p{margin:0}
+main p + p, main p + ul, main ul + p, main p + .cal, main .cal + p,
+main p + figure, main figure + p, main ul + .cal, main .cal + h3,
+main figure + h3, main p + table, main table + p{margin-top:15px}
+
+ul,ol.body{padding-left:19px;margin:0}
+li{margin-bottom:7px}
+li:last-child{margin-bottom:0}
+li::marker{color:var(--muted)}
+
+a{color:var(--stream);text-underline-offset:2px;text-decoration-thickness:1px}
+a:focus-visible,button:focus-visible,input:focus-visible{
+  outline:2px solid var(--stream);outline-offset:2px;border-radius:2px;
+}
+
+strong{font-weight:600}
+em{font-style:italic}
+
+/* ---------- role chips ---------- */
+.chip{
+  display:inline-flex;align-items:center;gap:5px;flex:none;
+  font-family:"IBM Plex Mono",monospace;font-size:.63rem;font-weight:500;
+  letter-spacing:.1em;text-transform:uppercase;
+  padding:2px 7px;border-radius:2px;border:1px solid;
+}
+.chip::before{content:"";width:5px;height:5px;border-radius:50%;background:currentColor}
+.c-stream{color:var(--stream);border-color:var(--stream);background:var(--stream-soft)}
+.c-couch{color:var(--couch);border-color:var(--couch);background:var(--couch-soft)}
+.c-both{color:var(--muted);border-color:var(--rule-strong);background:var(--surface-2)}
+.chips{display:flex;gap:7px;flex-wrap:wrap}
+
+/* ---------- code ---------- */
+.codeblock{position:relative;margin-top:15px}
+pre{
+  background:var(--code-bg);color:var(--code-ink);
+  padding:15px 17px;border-radius:4px;overflow-x:auto;margin:0;
+  font-size:.815rem;line-height:1.62;border:1px solid var(--rule);
+}
+pre .c{color:var(--code-dim)}
+:not(pre) > code{
+  background:var(--surface-2);color:var(--ink);padding:1px 5px;border-radius:3px;
+  font-size:.86em;border:1px solid var(--rule);
+}
+.copy{
+  position:absolute;top:8px;right:8px;
+  font-family:"IBM Plex Mono",monospace;font-size:.63rem;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--code-dim);background:transparent;
+  border:1px solid var(--code-dim);border-radius:2px;padding:3px 7px;
+  cursor:pointer;opacity:0;transition:opacity .14s,color .14s,border-color .14s;
+}
+.codeblock:hover .copy,.copy:focus-visible{opacity:1}
+.copy:hover{color:var(--code-ink);border-color:var(--code-ink)}
+
+/* ---------- callouts ---------- */
+.cal{
+  border:1px solid var(--rule);border-left-width:3px;border-radius:3px;
+  padding:13px 16px;background:var(--surface);font-size:.92rem;
+}
+.cal .lab{
+  font-family:"IBM Plex Mono",monospace;font-size:.63rem;font-weight:600;
+  letter-spacing:.12em;text-transform:uppercase;display:block;margin-bottom:5px;
+}
+.cal p + p{margin-top:10px}
+.cal-note{border-left-color:var(--rule-strong)}
+.cal-note .lab{color:var(--muted)}
+.cal-warn{border-left-color:var(--couch);background:var(--couch-soft)}
+.cal-warn .lab{color:var(--couch)}
+.cal-stop{border-left-color:var(--danger);background:var(--danger-soft)}
+.cal-stop .lab{color:var(--danger)}
+
+/* ---------- diagram ---------- */
+figure{margin:0}
+figcaption{font-size:.78rem;color:var(--muted);margin-top:10px;line-height:1.5}
+.diagram{
+  border:1px solid var(--rule);border-radius:4px;background:var(--surface);
+  padding:20px;display:grid;gap:14px;box-shadow:var(--shadow);
+}
+@media (min-width:620px){.diagram{grid-template-columns:1fr auto 1fr;align-items:stretch}}
+.node{
+  border:1px solid var(--rule);border-radius:3px;padding:14px;
+  display:flex;flex-direction:column;gap:7px;background:var(--surface-2);
+}
+.node-couch{border-top:3px solid var(--couch)}
+.node-stream{border-top:3px solid var(--stream)}
+.node h5{
+  margin:0;font-family:Archivo,sans-serif;font-size:.95rem;font-weight:600;letter-spacing:-.01em;
+}
+.node ul{list-style:none;padding:0;margin:0;font-size:.79rem;color:var(--ink-2);line-height:1.5}
+.node li{margin-bottom:4px;padding-left:12px;position:relative}
+.node li::before{
+  content:"";position:absolute;left:0;top:.62em;width:5px;height:1px;background:var(--rule-strong);
+}
+.xor{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  font-family:"IBM Plex Mono",monospace;font-size:.66rem;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--muted);text-align:center;padding:4px;
+}
+.xor .bar{width:1px;flex:1;min-height:14px;background:var(--rule)}
+@media (max-width:619px){.xor{flex-direction:row}.xor .bar{width:auto;height:1px;min-height:0;flex:1}}
+
+/* ---------- tables ---------- */
+.tablewrap{overflow-x:auto;border:1px solid var(--rule);border-radius:3px}
+table{border-collapse:collapse;width:100%;font-size:.87rem;min-width:420px;background:var(--surface)}
+th,td{text-align:left;padding:9px 14px;border-bottom:1px solid var(--rule);vertical-align:top}
+th{
+  font-family:"IBM Plex Mono",monospace;font-size:.64rem;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--muted);font-weight:500;background:var(--surface-2);
+}
+tr:last-child td{border-bottom:0}
+td:first-child{font-weight:500;white-space:nowrap}
+
+/* ---------- checklist ---------- */
+.check{list-style:none;padding:0;margin-top:15px;display:flex;flex-direction:column;gap:1px}
+.check li{
+  margin:0;display:flex;gap:11px;align-items:flex-start;
+  padding:9px 12px;background:var(--surface);border:1px solid var(--rule);border-radius:3px;
+}
+.check input{
+  margin:0;flex:none;width:16px;height:16px;margin-top:3px;
+  accent-color:var(--stream);cursor:pointer;
+}
+.check label{cursor:pointer;font-size:.9rem;line-height:1.5}
+.check input:checked + label{color:var(--muted);text-decoration:line-through;text-decoration-color:var(--rule-strong)}
+
+/* ---------- sources ---------- */
+.sources{border-top:1px solid var(--rule);padding-top:22px;font-size:.83rem;color:var(--muted)}
+.sources ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:6px;margin-top:10px}
+.sources li{margin:0;padding-left:14px;position:relative}
+.sources li::before{content:"";position:absolute;left:0;top:.68em;width:6px;height:1px;background:var(--rule-strong)}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important}}
+</style>
+
+<header class="mast">
+  <div class="wrap mast-inner">
+    <span class="eyebrow">Build plan · Ryzen 5600X / RX 5700 XT</span>
+    <h1>Couch and Deck</h1>
+    <p class="standfirst">Turning one ATX box into two machines that never run at once: a
+      <strong>living-room console</strong> on the TV, and a <strong>headless streaming host</strong>
+      rendering at Steam Deck resolution. Bazzite <code>bazzite-deck</code>, Sunshine over HEVC,
+      switched by connection.</p>
+    <dl class="spec">
+      <div><dt>CPU</dt><dd>Ryzen 5 5600X</dd></div>
+      <div><dt>GPU</dt><dd>RX 5700 XT 8 GB</dd></div>
+      <div><dt>Memory</dt><dd>16 GB @ 3600</dd></div>
+      <div><dt>Storage</dt><dd>2 TB SN770</dd></div>
+      <div><dt>OS</dt><dd>bazzite-deck</dd></div>
+      <div><dt>Encode</dt><dd>VCN 2.0 · HEVC</dd></div>
+    </dl>
+  </div>
+</header>
+
+<div class="wrap cols">
+
+  <nav class="rail" aria-label="Contents">
+    <h4>Phases</h4>
+    <ol>
+      <li><a href="#arch"><span class="n">00</span><span>The architecture</span></a></li>
+      <li><a href="#bios"><span class="n">01</span><span>BIOS &amp; hardware</span></a></li>
+      <li><a href="#install"><span class="n">02</span><span>Install Bazzite</span></a></li>
+      <li><a href="#edid"><span class="n">03</span><span>Pin the TV's EDID</span></a></li>
+      <li><a href="#headless"><span class="n">04</span><span>Headless session</span></a></li>
+      <li><a href="#sunshine"><span class="n">05</span><span>Sunshine</span></a></li>
+      <li><a href="#clients"><span class="n">06</span><span>Deck &amp; Surface</span></a></li>
+      <li><a href="#htpc"><span class="n">07</span><span>HTPC duties</span></a></li>
+      <li><a href="#wake"><span class="n">08</span><span>Wake &amp; power</span></a></li>
+      <li><a href="#limits"><span class="n">—</span><span>Known ceilings</span></a></li>
+      <li><a href="#thin"><span class="n">—</span><span>Thin ice</span></a></li>
+      <li><a href="#checklist"><span class="n">—</span><span>Checklist</span></a></li>
+    </ol>
+  </nav>
+
+  <main>
+
+    <!-- 00 -->
+    <section id="arch">
+      <div class="phase-head">
+        <span class="phase-num">Phase 00 · Design</span>
+        <h2>Two sessions, never both</h2>
+      </div>
+
+      <p>The whole plan rests on one decision: the TV session and the streaming session are
+        <strong>mutually exclusive</strong>. Sunshine stops one and starts the other when a client
+        connects, and reverses it on disconnect.</p>
+
+      <p>This isn't a compromise — it dodges a hard blocker. Steam permits <strong>one running
+        instance per user account</strong>, so two concurrent sessions would need a second Linux user
+        with its own Steam install and library. You are one person; you're either on the sofa or on
+        the Deck. Making the sessions exclusive makes that constraint free.</p>
+
+      <figure>
+        <div class="diagram">
+          <div class="node node-couch">
+            <span class="chip c-couch">Couch</span>
+            <h5>Gaming Mode</h5>
+            <ul>
+              <li>gamescope on <code>HDMI-A-1</code></li>
+              <li>Real KMS output to the TV</li>
+              <li>EDID pinned — survives TV off</li>
+              <li>4K60 ceiling, HDR for film</li>
+            </ul>
+          </div>
+          <div class="xor"><span class="bar"></span><span>one<br>at a time</span><span class="bar"></span></div>
+          <div class="node node-stream">
+            <span class="chip c-stream">Stream</span>
+            <h5>Headless Sway</h5>
+            <ul>
+              <li>wlroots headless → <code>wayland-1</code></li>
+              <li>Nested gamescope at client res</li>
+              <li>Captured via wlr-screencopy</li>
+              <li>VAAPI HEVC → Deck / Surface</li>
+            </ul>
+          </div>
+        </div>
+        <figcaption>Sunshine's Do command tears down the left side and brings up the right; the Undo
+          command reverses it. No display is shared, so neither session inherits the other's resolution.</figcaption>
+      </figure>
+
+      <div class="cal cal-note">
+        <span class="lab">Why not just capture Gaming Mode</span>
+        <p>You could point Sunshine at the existing gamescope session with KMS capture — far simpler.
+          But the stream then inherits the TV's 4K mode, so VCN 2.0 encodes 4K just to downscale onto
+          a 1280×800 panel. That's the option you rejected, and it's kept here only as the fallback
+          in <a href="#thin">Thin ice</a>.</p>
+      </div>
+    </section>
+
+    <!-- 01 -->
+    <section id="bios">
+      <div class="phase-head">
+        <span class="phase-num">Phase 01 · Before the installer</span>
+        <h2>BIOS and hardware</h2>
+      </div>
+
+      <p>Settle these first — several are painful to change once the box lives behind the TV.</p>
+
+      <ul>
+        <li><strong>Memory:</strong> enable A-XMP to 3600 MT/s, then confirm FCLK sits at 1800 MHz for
+          a 1:1 ratio. This is the Zen 3 sweet spot — don't push past it.</li>
+        <li><strong>Above 4G Decoding</strong> and <strong>Resizable BAR</strong> on. Gains on RDNA 1
+          are modest and title-dependent, but it costs nothing to try.</li>
+        <li><strong>ErP / Energy Saving: OFF.</strong> ErP cuts standby power to the NIC and silently
+          kills Wake-on-LAN. This is the single most common reason a headless box won't wake.</li>
+        <li><strong>Wake on PCI-E / LAN:</strong> enabled.</li>
+        <li><strong>Wired Ethernet</strong> to the host, non-negotiable. WoL over Wi-Fi is unreliable,
+          and streaming wants the stable link. Wi-Fi is for the clients.</li>
+      </ul>
+
+      <div class="cal cal-warn">
+        <span class="lab">Worth doing now</span>
+        <p><strong>16 GB is the weakest spec in the build.</strong> Running a compositor, Steam, a game
+          and Sunshine's encode path together will make you feel it. 32 GB is the cheapest meaningful
+          upgrade left on AM4 — and far easier to fit on a bench than behind a TV unit.</p>
+      </div>
+    </section>
+
+    <!-- 02 -->
+    <section id="install">
+      <div class="phase-head">
+        <span class="phase-num">Phase 02 · Base OS</span>
+        <h2>Install Bazzite</h2>
+      </div>
+
+      <p>Grab the <strong><code>bazzite-deck</code></strong> image for AMD from bazzite.gg — the
+        Handheld/HTPC edition. It boots straight into Steam Gaming Mode and keeps Desktop Mode behind
+        the power menu, which is exactly the console behaviour you want. Non-Steam-Deck hardware is
+        supported on this image provided the GPU is a modern AMD part; yours qualifies.</p>
+
+      <h3>Storage: use the 2 TB, ignore the 128 GB</h3>
+      <p>Install to the <strong>SN770 as a single whole-disk btrfs root</strong>. Don't split root and
+        games across the two drives.</p>
+      <p>Bazzite keeps two full deployments plus Flatpaks in <code>/var</code>, and image sizes have
+        grown; 128 GB is uncomfortably tight for that on its own, and splitting means babysitting two
+        Steam libraries forever. One big filesystem on the faster drive is simpler and faster. Leave
+        the 128 GB unmounted as a spare — it's a fine place for a second library or a rescue install
+        later.</p>
+
+      <p>On first boot: sign into Steam, let it update, confirm Gaming Mode comes up on the TV.
+        Get this working before you touch anything below.</p>
+    </section>
+
+    <!-- 03 -->
+    <section id="edid">
+      <div class="phase-head">
+        <span class="phase-num">Phase 03 · Display</span>
+        <div class="chips"><span class="chip c-couch">Couch</span></div>
+        <h2>Pin the TV's EDID</h2>
+      </div>
+
+      <p>The 5600X has <strong>no integrated graphics</strong>, so the 5700 XT is the only display
+        path. When the TV or AVR powers off, the HDMI connector drops and the session can collapse or
+        renegotiate to a junk mode. Pinning a fake EDID makes the output exist unconditionally.</p>
+
+      <h3>Find the connector</h3>
+      <div class="codeblock"><button class="copy">Copy</button><pre>for p in /sys/class/drm/*/status; do
+  con=${p%/status}; echo -n "${con#*/card?-}: "; cat "$p"
+done</pre></div>
+      <p>Note the name that reports <code>connected</code> with the TV on — likely
+        <code>HDMI-A-1</code>, but verify rather than assume.</p>
+
+      <h3>Capture and stage the EDID</h3>
+      <div class="codeblock"><button class="copy">Copy</button><pre><span class="c"># with the TV on and awake</span>
+sudo mkdir -p /usr/local/lib/firmware/edid
+sudo cp /sys/class/drm/card*-HDMI-A-1/edid \
+        /usr/local/lib/firmware/edid/tv.bin</pre></div>
+
+      <div class="cal cal-note">
+        <span class="lab">Atomic detail</span>
+        <p><code>/usr/lib/firmware</code> is read-only on Bazzite, which is why the file goes to
+          <code>/usr/local/lib/firmware</code> and why <code>firmware_class.path</code> below is
+          required — without it the kernel never looks there.</p>
+      </div>
+
+      <h3>Set the kernel arguments</h3>
+      <div class="codeblock"><button class="copy">Copy</button><pre>sudo rpm-ostree kargs \
+  --append-if-missing="firmware_class.path=/usr/local/lib/firmware" \
+  --append-if-missing="drm.edid_firmware=HDMI-A-1:edid/tv.bin" \
+  --append-if-missing="video=HDMI-A-1:e"</pre></div>
+
+      <p>Both display arguments are load-bearing: <code>drm.edid_firmware</code> alone doesn't take,
+        and <code>video=…:e</code> alone gives you a connector with no modes. Reboot, then
+        <strong>test it properly</strong> — power the TV off at the wall and confirm the connector
+        still reports its modes. If it doesn't, a £5 HDMI dummy plug does the same job in hardware.</p>
+    </section>
+
+    <!-- 04 -->
+    <section id="headless">
+      <div class="phase-head">
+        <span class="phase-num">Phase 04 · The interesting part</span>
+        <div class="chips"><span class="chip c-stream">Stream</span></div>
+        <h2>The headless session</h2>
+      </div>
+
+      <p>A second compositor, running on nothing, at whatever resolution the client asks for.</p>
+
+      <div class="cal cal-stop">
+        <span class="lab">Get this order right</span>
+        <p>Gamescope launched <strong>embedded from a TTY</strong> and captured by Sunshine produces
+          RTSP timeouts — a known, reported failure. Gamescope <strong>nested inside another
+          compositor</strong> works. So the stack is Sway-headless on the bottom, gamescope nested
+          inside it, Steam inside that. Don't collapse those layers.</p>
+      </div>
+
+      <h3>Layer Sway</h3>
+      <div class="codeblock"><button class="copy">Copy</button><pre>rpm-ostree install sway
+systemctl reboot</pre></div>
+      <p>This is a real cost on an atomic image — every future update rebuilds with the layered
+        package, so updates get slower. It's the price of the separate-session design.</p>
+
+      <h3>The compositor unit</h3>
+      <p><code>~/.config/systemd/user/sway-sunshine.service</code>:</p>
+      <div class="codeblock"><button class="copy">Copy</button><pre>[Unit]
+Description=Headless Sway for Sunshine
+After=graphical-session-pre.target
+
+[Service]
+Type=simple
+Environment=WLR_BACKENDS=headless,libinput
+Environment=WLR_RENDERER=vulkan
+Environment=LIBSEAT_BACKEND=noop
+Environment=WAYLAND_DISPLAY=wayland-1
+Environment=XDG_SESSION_TYPE=wayland
+ExecStartPre=-/usr/bin/rm -f %t/sway-ipc.sock
+ExecStart=/usr/bin/sway -c %h/.config/sway/sunshine.conf
+Restart=on-failure
+
+[Install]
+WantedBy=default.target</pre></div>
+
+      <p>Your account needs to be in the <code>input</code> group for
+        <code>LIBSEAT_BACKEND=noop</code> to reach input devices. The reference implementation for
+        this pattern uses <code>gles2</code>, but that's an NVIDIA-specific workaround for DRM format
+        modifier issues — on AMD, Vulkan is the right choice. Fall back to <code>gles2</code> only if
+        you hit renderer errors.</p>
+
+      <h3>What runs inside it</h3>
+      <p>In <code>sunshine.conf</code>, disable every physical input device so keyboard and mouse
+        don't leak into the streaming session, then launch the nested stack:</p>
+      <div class="codeblock"><button class="copy">Copy</button><pre>exec gamescope -W 1280 -H 800 -f -- steam -gamepadui</pre></div>
+      <p><code>-W/-H</code> is gamescope's output size; <code>-w/-h</code> sets the game's internal
+        render size if you want to render below the output and let FSR upscale.</p>
+
+      <h3>Follow the client's resolution</h3>
+      <p>Sunshine exports <code>SUNSHINE_CLIENT_WIDTH</code>, <code>SUNSHINE_CLIENT_HEIGHT</code> and
+        <code>SUNSHINE_CLIENT_FPS</code> to its prep commands. A two-line script resizes the headless
+        output to match whichever client just connected:</p>
+      <div class="codeblock"><button class="copy">Copy</button><pre>#!/usr/bin/bash
+swaymsg output HEADLESS-1 mode \
+  "${SUNSHINE_CLIENT_WIDTH}x${SUNSHINE_CLIENT_HEIGHT}@${SUNSHINE_CLIENT_FPS}Hz"</pre></div>
+      <p>This is what buys you the Deck's native 1280×800 and the Surface's 3:2 from the same host
+        without either compromising the other.</p>
+
+      <h3>Audio isolation</h3>
+      <p>Create a persistent PipeWire null sink named <code>sink-sunshine-stereo</code> and point the
+        streaming session at it. Keep it alive independent of connection state, and add a prep command
+        that restores the host's default sink — Sunshine will otherwise hijack it and you'll lose TV
+        audio in a way that's baffling to debug later.</p>
+    </section>
+
+    <!-- 05 -->
+    <section id="sunshine">
+      <div class="phase-head">
+        <span class="phase-num">Phase 05 · Host</span>
+        <div class="chips"><span class="chip c-stream">Stream</span></div>
+        <h2>Sunshine</h2>
+      </div>
+
+      <p>Sunshine ships with Bazzite; you only enable it:</p>
+      <div class="codeblock"><button class="copy">Copy</button><pre>ujust setup-sunshine</pre></div>
+      <p>Bazzite offers Flatpak and Homebrew builds. Take <strong>Homebrew</strong> — it's the one
+        Bazzite recommends when you're outside a normal desktop session, and the Flatpak needs
+        <code>flatpak-spawn --host</code> in front of every prep command, which gets ugly fast.</p>
+
+      <p>Then open <code>https://localhost:47990</code>, set a username and password, and configure:</p>
+
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Setting</th><th>Value</th><th>Why</th></tr></thead>
+          <tbody>
+            <tr><td>Encoder</td><td>VAAPI</td><td>The AMD path on Linux</td></tr>
+            <tr><td>Adapter</td><td><code>/dev/dri/renderD128</code></td><td>Verify the node number</td></tr>
+            <tr><td>Codec</td><td>HEVC</td><td>See below — not optional</td></tr>
+            <tr><td>AV1</td><td>Off</td><td>VCN 2.0 has no AV1 encoder</td></tr>
+            <tr><td>Bitrate</td><td>~30 Mbps</td><td>Wired host, 1280×800</td></tr>
+            <tr><td>Audio sink</td><td><code>sink-sunshine-stereo</code></td><td>Keeps game audio off the TV</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="cal cal-warn">
+        <span class="lab">Force HEVC</span>
+        <p>Navi 10 is VCN 2.0 — H.264 and HEVC only; AV1 encode arrives with RX 7000. And AMD's
+          <em>H.264</em> encoder on this generation is genuinely poor: the consistent report is blocky
+          output that needs endless tuning, where HEVC on the same card looks clean immediately.
+          Both your clients decode HEVC. Set it and don't leave it on auto.</p>
+      </div>
+
+      <h3>The session switch</h3>
+      <p>This is where the architecture becomes real. In Sunshine's Do/Undo commands:</p>
+      <div class="codeblock"><button class="copy">Copy</button><pre><span class="c"># Do — on client connect</span>
+systemctl --user stop gamescope-session.service
+systemctl --user start sway-sunshine.service
+
+<span class="c"># Undo — on disconnect</span>
+systemctl --user stop sway-sunshine.service
+systemctl --user start gamescope-session.service</pre></div>
+      <p>Check the exact unit name for Gaming Mode on your install before wiring this up. Test the
+        Undo path deliberately — a half-failed teardown that leaves you with neither session running
+        is the failure mode that requires a keyboard behind the sofa.</p>
+    </section>
+
+    <!-- 06 -->
+    <section id="clients">
+      <div class="phase-head">
+        <span class="phase-num">Phase 06 · Clients</span>
+        <div class="chips"><span class="chip c-stream">Stream</span></div>
+        <h2>Deck and Surface</h2>
+      </div>
+
+      <h3>Steam Deck</h3>
+      <ul>
+        <li>Moonlight from Flathub. Stream at <strong>1280×800</strong> to match the panel exactly —
+          no scaling on either end.</li>
+        <li>60 Hz on LCD; 90 Hz on OLED if the link holds it. HEVC, ~30 Mbps.</li>
+        <li>Add Moonlight to Steam as a non-Steam game so it launches from Gaming Mode without ever
+          visiting the desktop.</li>
+      </ul>
+
+      <h3>Surface</h3>
+      <ul>
+        <li>3:2 display, so pick a 3:2 stream resolution — <strong>1920×1280</strong> is the sensible
+          target. The headless output will follow it via the resize script.</li>
+        <li>Its Intel iGPU decodes HEVC in hardware; confirm hardware decoding is actually on rather
+          than silently falling back to software.</li>
+      </ul>
+    </section>
+
+    <!-- 07 -->
+    <section id="htpc">
+      <div class="phase-head">
+        <span class="phase-num">Phase 07 · The other job</span>
+        <div class="chips"><span class="chip c-couch">Couch</span></div>
+        <h2>HTPC duties</h2>
+      </div>
+
+      <ul>
+        <li><strong>Kodi or Jellyfin</strong> as a Flatpak, added to Steam as a non-Steam shortcut so
+          it's reachable from Big Picture with a controller.</li>
+        <li><strong>HDR</strong> works through gamescope on AMD. Over HDMI 2.0b you're at 4K60
+          10-bit 4:2:0 — fine for film, and the bandwidth ceiling is why.</li>
+        <li><strong>Audio passthrough</strong> to an AVR via PipeWire if you have one; set the HDMI
+          sink's profile before assuming bitstreaming works.</li>
+      </ul>
+
+      <div class="cal cal-warn">
+        <span class="lab">No CEC on this card</span>
+        <p>The 5700 XT has no HDMI-CEC, so your TV remote will not drive Kodi and the box won't
+          follow the TV's power state. If remote control matters, budget for a Pulse-Eight USB-CEC
+          adapter. Otherwise plan on a controller or a small wireless keyboard as the only input.</p>
+      </div>
+    </section>
+
+    <!-- 08 -->
+    <section id="wake">
+      <div class="phase-head">
+        <span class="phase-num">Phase 08 · Power</span>
+        <div class="chips"><span class="chip c-both">Both</span></div>
+        <h2>Wake and power</h2>
+      </div>
+
+      <p>Persist Wake-on-LAN through NetworkManager rather than a one-shot <code>ethtool</code> call,
+        which won't survive a reboot:</p>
+      <div class="codeblock"><button class="copy">Copy</button><pre>nmcli connection modify "Wired connection 1" \
+  802-3-ethernet.wake-on-lan magic</pre></div>
+
+      <p>Then add the host's MAC to Moonlight on the Deck so it can wake the box before connecting.
+        Verify by suspending, waking from the Deck, and streaming — all without touching the tower.
+        That round trip is the real acceptance test for "headless".</p>
+
+      <p>If suspend proves flaky on this platform, leaving the machine at idle is a legitimate answer
+        for a box that's also a media player.</p>
+    </section>
+
+    <!-- limits -->
+    <section id="limits">
+      <div class="phase-head">
+        <span class="phase-num">Reference</span>
+        <h2>Known ceilings</h2>
+      </div>
+      <p>None of these are faults in the build — they're the hardware, worth knowing before you're
+        disappointed by them.</p>
+      <div class="tablewrap">
+        <table>
+          <thead><tr><th>Limit</th><th>Consequence</th></tr></thead>
+          <tbody>
+            <tr><td>HDMI 2.0b</td><td>4K60 max to the TV. No 4K120, no HDMI VRR on this card.</td></tr>
+            <tr><td>8 GB VRAM</td><td>Target 1440p and FSR-upscale to 4K. Native 4K will thrash in modern titles.</td></tr>
+            <tr><td>VCN 2.0</td><td>HEVC is your best encoder. No AV1 until RX 7000.</td></tr>
+            <tr><td>16 GB RAM</td><td>Tight with compositor + game + encode. Upgrade when convenient.</td></tr>
+            <tr><td>Navi 10 quirks</td><td>On black screens or flicker, try <code>amdgpu.dcdebugmask=0x10</code> to disable MPO.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- thin ice -->
+    <section id="thin">
+      <div class="phase-head">
+        <span class="phase-num">Honesty</span>
+        <h2>Where this plan is on thin ice</h2>
+      </div>
+
+      <p>Phases 01–03 and 05–08 are well-trodden. Phase 04 is not, and you should know exactly where
+        the uncertainty sits before you spend an evening on it.</p>
+
+      <ul>
+        <li><strong>The reference implementation is NVIDIA-targeted.</strong> The headless-Sway +
+          Sunshine pattern is proven, but the published version assumes NVENC and contains no AMD
+          guidance. The architecture translates directly and VAAPI is well-supported — but you will be
+          on less-documented ground, and the renderer and capture path are where I'd expect friction.</li>
+        <li><strong>Verify the nested/embedded distinction yourself.</strong> It comes from a Sunshine
+          bug report, not from AMD-specific testing on Bazzite.</li>
+        <li><strong>Layering Sway costs you atomic-update speed</strong> permanently. If that annoys
+          you more than resolution mismatch does, the trade is worth revisiting.</li>
+      </ul>
+
+      <div class="cal cal-note">
+        <span class="lab">The fallback, if Phase 04 fights you</span>
+        <p>Enable Sunshine with KMS capture against the existing Gaming Mode session and accept that
+          the stream inherits the TV's resolution. You lose Deck-native rendering and waste encoder
+          budget, but it's a well-supported path on Bazzite and it works. Bank Phases 01–03 first
+          either way — they're useful under both designs.</p>
+      </div>
+    </section>
+
+    <!-- checklist -->
+    <section id="checklist">
+      <div class="phase-head">
+        <span class="phase-num">Build day</span>
+        <h2>Validation checklist</h2>
+      </div>
+      <p>Prove each layer before building the next one on top. Ticks are saved in this browser.</p>
+      <ul class="check" id="cl">
+        <li><input type="checkbox" id="k1"><label for="k1">A-XMP at 3600, FCLK 1:1 at 1800 MHz</label></li>
+        <li><input type="checkbox" id="k2"><label for="k2">ErP disabled, Wake on PCI-E enabled</label></li>
+        <li><input type="checkbox" id="k3"><label for="k3">Bazzite installed to the SN770, Gaming Mode boots on the TV</label></li>
+        <li><input type="checkbox" id="k4"><label for="k4">EDID pinned — connector keeps its modes with the TV off at the wall</label></li>
+        <li><input type="checkbox" id="k5"><label for="k5">Headless Sway starts on <code>wayland-1</code> with the TV session stopped</label></li>
+        <li><input type="checkbox" id="k6"><label for="k6">Nested gamescope + Steam renders inside the headless session</label></li>
+        <li><input type="checkbox" id="k7"><label for="k7">Sunshine captures it — HEVC confirmed in the log, not H.264</label></li>
+        <li><input type="checkbox" id="k8"><label for="k8">Deck connects at 1280×800 with no scaling at either end</label></li>
+        <li><input type="checkbox" id="k9"><label for="k9">Disconnect restores Gaming Mode on the TV cleanly</label></li>
+        <li><input type="checkbox" id="k10"><label for="k10">Game audio stays off the TV speakers while streaming</label></li>
+        <li><input type="checkbox" id="k11"><label for="k11">Wake-on-LAN from the Deck, then stream — tower untouched</label></li>
+        <li><input type="checkbox" id="k12"><label for="k12">Surface connects at 1920×1280 with hardware decode</label></li>
+      </ul>
+    </section>
+
+    <section class="sources">
+      <strong>Sources</strong>
+      <ul>
+        <li><a href="https://docs.bazzite.gg/General/Installation_Guide/Installing_Bazzite_for_HTPC_Setups/">Bazzite — Installing for HTPC setups</a></li>
+        <li><a href="https://docs.bazzite.gg/Handheld_and_HTPC_edition/Steam_Gaming_Mode/">Bazzite — Bazzite-Deck overview</a></li>
+        <li><a href="https://docs.bazzite.gg/Advanced/sunshine/">Bazzite — Setting up Sunshine</a></li>
+        <li><a href="https://github.com/daaaaan/sunshine-headless-sway">sunshine-headless-sway — headless compositor pattern</a></li>
+        <li><a href="https://github.com/LizardByte/Sunshine/issues/1928">Sunshine #1928 — embedded gamescope RTSP timeout</a></li>
+        <li><a href="https://gist.github.com/iamthenuggetman/6d0884954653940596d463a48b2f459c">Sunshine on Bazzite with a virtual display — EDID and kargs</a></li>
+        <li><a href="https://jellyfin.org/docs/general/post-install/transcoding/hardware-acceleration/amd/">Jellyfin — AMD hardware acceleration support matrix</a></li>
+        <li><a href="https://www.tauceti.blog/posts/linux-ffmpeg-amd-5700xt-hardware-video-encoding-hevc-h265-vaapi/">HEVC vs H.264 encode quality on the RX 5700 XT</a></li>
+        <li><a href="https://wiki.archlinux.org/title/Gamescope">ArchWiki — Gamescope</a></li>
+      </ul>
+    </section>
+
+  </main>
+</div>
+
+<script>
+document.querySelectorAll(".copy").forEach(function(btn){
+  btn.addEventListener("click", function(){
+    var pre = btn.parentElement.querySelector("pre");
+    navigator.clipboard.writeText(pre.innerText).then(function(){
+      var old = btn.textContent;
+      btn.textContent = "Copied";
+      setTimeout(function(){ btn.textContent = old; }, 1400);
+    }).catch(function(){ btn.textContent = "Select manually"; });
+  });
+});
+
+(function(){
+  var KEY = "smbp-checklist-v1";
+  var boxes = document.querySelectorAll("#cl input[type=checkbox]");
+  var state = {};
+  try { state = JSON.parse(localStorage.getItem(KEY) || "{}") || {}; } catch (e) { state = {}; }
+  boxes.forEach(function(b){
+    if (state[b.id]) b.checked = true;
+    b.addEventListener("change", function(){
+      state[b.id] = b.checked;
+      try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+    });
+  });
+})();
+</script>
